@@ -10,16 +10,16 @@ export function CategoriesPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="p-6 space-y-5 max-w-5xl mx-auto">
+    <div className="p-3 sm:p-6 space-y-4 sm:space-y-5 max-w-5xl mx-auto">
       <div>
-        <h1 className="text-white font-bold text-xl flex items-center gap-2">
+        <h1 className="text-white font-bold text-lg sm:text-xl flex items-center gap-2">
           <FolderOpen className="w-5 h-5 text-brand-400" />
           Categories
         </h1>
-        <p className="text-dark-400 text-sm mt-0.5">Browse passwords by category</p>
+        <p className="text-dark-400 text-xs sm:text-sm mt-0.5">Browse passwords by category</p>
       </div>
 
-      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
         {ALL_CATEGORIES.map((cat, i) => {
           const count = stats.categories[cat] ?? 0;
           const catPasswords = passwords.filter((p) => p.category === cat).slice(0, 3);

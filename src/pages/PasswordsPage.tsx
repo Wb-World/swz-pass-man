@@ -420,41 +420,41 @@ export function PasswordsPage() {
   };
 
   return (
-    <div className="p-6 space-y-4 max-w-full">
+    <div className="p-3 sm:p-6 space-y-4 max-w-full">
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-3">
+      <div className="flex items-center justify-between flex-wrap gap-2 sm:gap-3">
         <div>
-          <h1 className="text-white font-bold text-xl">Password Vault</h1>
-          <p className="text-dark-400 text-sm mt-0.5">{filtered.length} of {passwords.length} entries</p>
+          <h1 className="text-white font-bold text-lg sm:text-xl">Password Vault</h1>
+          <p className="text-dark-400 text-xs sm:text-sm mt-0.5">{filtered.length} of {passwords.length} entries</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
           <button
             onClick={() => setShowFilters(!showFilters)}
             className={clsx(
-              'flex items-center gap-2 px-3 py-2 rounded-xl border text-sm transition-colors',
+              'flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl border text-xs sm:text-sm transition-colors',
               showFilters ? 'bg-brand-500/20 border-brand-500/30 text-brand-400' : 'border-white/10 text-dark-300 hover:bg-white/5'
             )}
           >
-            <Filter className="w-4 h-4" />
+            <Filter className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             Filters
           </button>
           <button
             onClick={exportPasswords}
-            className="flex items-center gap-2 px-3 py-2 rounded-xl border border-white/10 text-dark-300 hover:bg-white/5 text-sm transition-colors"
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl border border-white/10 text-dark-300 hover:bg-white/5 text-xs sm:text-sm transition-colors"
           >
-            <Download className="w-4 h-4" />
+            <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             Export
           </button>
-          <label className="flex items-center gap-2 px-3 py-2 rounded-xl border border-white/10 text-dark-300 hover:bg-white/5 text-sm transition-colors cursor-pointer">
-            <Upload className="w-4 h-4" />
+          <label className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl border border-white/10 text-dark-300 hover:bg-white/5 text-xs sm:text-sm transition-colors cursor-pointer">
+            <Upload className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             Import
             <input type="file" accept=".json" onChange={handleImport} className="hidden" />
           </label>
           <button
             onClick={() => setAddOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-400 text-white text-sm font-semibold transition-colors shadow-lg shadow-brand-500/20"
+            className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-brand-500 hover:bg-brand-400 text-white text-xs sm:text-sm font-semibold transition-colors shadow-lg shadow-brand-500/20"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             Add New
           </button>
         </div>

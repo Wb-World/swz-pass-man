@@ -35,13 +35,13 @@ export function FavoritesPage() {
   };
 
   return (
-    <div className="p-6 space-y-5 max-w-5xl mx-auto">
+    <div className="p-3 sm:p-6 space-y-4 sm:space-y-5 max-w-5xl mx-auto">
       <div>
-        <h1 className="text-white font-bold text-xl flex items-center gap-2">
+        <h1 className="text-white font-bold text-lg sm:text-xl flex items-center gap-2">
           <Star className="w-5 h-5 text-amber-400 fill-amber-400" />
           Favorites
         </h1>
-        <p className="text-dark-400 text-sm mt-0.5">{favorites.length} starred entries</p>
+        <p className="text-dark-400 text-xs sm:text-sm mt-0.5">{favorites.length} starred entries</p>
       </div>
 
       <SearchBar value={search} onChange={setSearch} placeholder="Search favorites..." />

@@ -31,12 +31,12 @@ export function DashboardPage() {
     stats.securityScore >= 50 ? 'text-amber-400' : 'text-red-400';
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-3 sm:p-6 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       {/* Welcome Banner */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-brand-900/50 via-brand-800/30 to-purple-900/30 border border-brand-500/20 px-6 py-5"
+        className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-brand-900/50 via-brand-800/30 to-purple-900/30 border border-brand-500/20 px-4 sm:px-6 py-4 sm:py-5"
       >
         <div className="absolute inset-0 opacity-20"
           style={{
@@ -45,37 +45,37 @@ export function DashboardPage() {
         />
         <div className="relative flex items-center justify-between flex-wrap gap-4">
           <div>
-            <h2 className="text-white font-bold text-xl">
+            <h2 className="text-white font-bold text-lg sm:text-xl">
               Welcome back, {session?.displayName} 👋
             </h2>
-            <p className="text-dark-300 text-sm mt-1">
+            <p className="text-dark-300 text-xs sm:text-sm mt-1">
               Your vault is secure. Last login:{' '}
               {session?.loginTime
                 ? format(new Date(session.loginTime), 'MMM dd, yyyy h:mm a')
                 : '—'}
             </p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
             <div className="text-center">
-              <p className="text-dark-400 text-xs">Session</p>
-              <p className="text-white font-bold">{duration}</p>
+              <p className="text-dark-400 text-[10px] sm:text-xs">Session</p>
+              <p className="text-white font-bold text-xs sm:text-sm">{duration}</p>
             </div>
-            <div className="h-10 w-px bg-white/10" />
+            <div className="h-8 sm:h-10 w-px bg-white/10" />
             <div className="text-center">
-              <p className="text-dark-400 text-xs">Security Score</p>
-              <p className={`font-bold text-lg ${securityColor}`}>{stats.securityScore}%</p>
+              <p className="text-dark-400 text-[10px] sm:text-xs">Security Score</p>
+              <p className={`font-bold text-sm sm:text-lg ${securityColor}`}>{stats.securityScore}%</p>
             </div>
-            <div className="h-10 w-px bg-white/10" />
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+            <div className="h-8 sm:h-10 w-px bg-white/10" />
+            <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="text-emerald-400 text-xs font-semibold">2FA Active</span>
+              <span className="text-emerald-400 text-[11px] sm:text-xs font-semibold">2FA Active</span>
             </div>
           </div>
         </div>
       </motion.div>
 
       {/* Stat Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
         <StatCard icon={KeyRound} label="Total Passwords" value={stats.total} color="blue" delay={0} />
         <StatCard icon={AlertTriangle} label="Weak Passwords" value={stats.weak} color="red" subtitle="Needs attention" delay={0.05} />
         <StatCard icon={ShieldCheck} label="Strong Passwords" value={stats.strong} color="green" delay={0.1} />

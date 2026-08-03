@@ -168,7 +168,7 @@ export function LoginPage() {
           {/* Top accent line */}
           <div className="h-px bg-gradient-to-r from-transparent via-brand-500 to-transparent" />
 
-          <div className="px-8 py-8">
+          <div className="px-5 sm:px-8 py-6 sm:py-8">
             {/* Logo */}
             <div className="flex flex-col items-center mb-8">
               <motion.div
@@ -283,7 +283,7 @@ export function LoginPage() {
               </div>
 
               {/* Remember me & Forgot password */}
-              <div className="flex items-center justify-between">
+              {/* <div className="flex items-center justify-between">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
@@ -301,7 +301,7 @@ export function LoginPage() {
                 >
                   Forgot password?
                 </button>
-              </div>
+              </div> */}
 
               {/* Submit */}
               <motion.button
@@ -334,7 +334,7 @@ export function LoginPage() {
           {/* Bottom accent */}
           <div className="h-px bg-gradient-to-r from-transparent via-brand-500/50 to-transparent" />
           <div className="px-8 py-3 bg-dark-900/50 flex items-center justify-center gap-1.5">
-            <span className="text-dark-500 text-xs">© 2026 Secure Worldz — v1.0.0</span>
+            <span className="text-dark-500 text-xs">© 2026 Secure Worldz</span>
           </div>
         </motion.div>
       </motion.div>

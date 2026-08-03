@@ -59,9 +59,9 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
             className={clsx(
-              'relative w-full rounded-2xl',
+              'relative w-full max-h-[90vh] overflow-y-auto rounded-2xl sm:rounded-3xl',
               'bg-dark-900 border border-white/10',
-              'shadow-2xl shadow-black/50',
+              'shadow-2xl shadow-black/50 mx-auto',
               sizeMap[size]
             )}
           >

@@ -56,35 +56,35 @@ export function SettingsPage() {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-5">
+    <div className="p-3 sm:p-6 max-w-4xl mx-auto space-y-4 sm:space-y-5">
       <div>
-        <h1 className="text-white font-bold text-xl flex items-center gap-2">
+        <h1 className="text-white font-bold text-lg sm:text-xl flex items-center gap-2">
           <Settings className="w-5 h-5 text-brand-400" />
           Settings
         </h1>
-        <p className="text-dark-400 text-sm mt-0.5">Manage your account and preferences</p>
+        <p className="text-dark-400 text-xs sm:text-sm mt-0.5">Manage your account and preferences</p>
       </div>
 
-      <div className="flex gap-6">
+      <div className="flex flex-col md:flex-row gap-4 md:gap-6">
         {/* Tab sidebar */}
-        <div className="flex-shrink-0 w-48 space-y-1">
+        <div className="flex-shrink-0 w-full md:w-48 flex md:flex-col overflow-x-auto gap-1.5 md:gap-1 pb-1 md:pb-0 scrollbar-hide">
           {tabs.map(({ id, icon: Icon, label }) => (
             <button
               key={id}
               onClick={() => setActiveTab(id)}
               className={clsx(
-                'w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all',
+                'flex items-center gap-2 px-3 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all whitespace-nowrap',
                 activeTab === id
                   ? 'bg-brand-500/15 text-brand-400 border border-brand-500/20'
                   : 'text-dark-400 hover:text-white hover:bg-white/5'
               )}
             >
-              <Icon className="w-4 h-4" />
+              <Icon className="w-4 h-4 flex-shrink-0" />
               {label}
             </button>
           ))}
 
-          <div className="pt-4">
+          <div className="hidden md:block pt-4">
             <button
               onClick={handleLogout}
               className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 transition-all"

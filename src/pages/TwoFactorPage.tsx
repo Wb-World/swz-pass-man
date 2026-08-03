@@ -135,7 +135,7 @@ export function TwoFactorPage() {
         >
           <div className="h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent" />
 
-          <div className="px-8 py-8">
+          <div className="px-5 sm:px-8 py-6 sm:py-8">
             {/* Header */}
             <div className="flex items-center mb-6">
               <button
