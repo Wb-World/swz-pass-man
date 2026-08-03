@@ -44,7 +44,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/2fa" element={<TwoFactorPage />} />
 
-            {/* Protected Routes */}
+            {/* Protected */}
             <Route
               element={
                 <ProtectedRoute>
