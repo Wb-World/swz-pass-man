@@ -79,50 +79,71 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const initAuth = async () => {
       try {
+        // First try to restore a Supabase Auth session
         const { data: { session: supabaseSession } } = await supabase.auth.getSession();
 
         if (!mounted) return;
 
-        if (!supabaseSession) {
-          dispatch({ type: 'SET_LOADING', payload: false });
+        if (supabaseSession) {
+          // Fetch profile from DB
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', supabaseSession.user.id)
+            .single();
+
+          const profile = profileData as Profile | null;
+
+          if (!mounted) return;
+
+          const sessionInfo: SessionInfo = {
+            userId: supabaseSession.user.id,
+            isAuthenticated: true,
+            is2FAVerified: false,
+            username: profile?.username ?? supabaseSession.user.email?.split('@')[0] ?? '',
+            displayName: profile?.display_name ?? supabaseSession.user.email?.split('@')[0] ?? '',
+            role: (profile?.role as SessionInfo['role']) ?? 'viewer',
+            loginTime: supabaseSession.user.last_sign_in_at ?? new Date().toISOString(),
+            avatar: profile?.avatar ?? '?',
+            email: supabaseSession.user.email ?? '',
+          };
+
+          const twoFAUserId = localStorage.getItem(TWO_FA_KEY);
+          const twoFAVerified = twoFAUserId === supabaseSession.user.id;
+
+          if (twoFAVerified && !isSessionExpired()) {
+            dispatch({ type: 'RESTORE_SESSION', payload: { ...sessionInfo, is2FAVerified: true } });
+          } else if (twoFAVerified && isSessionExpired()) {
+            localStorage.removeItem(TWO_FA_KEY);
+            await supabase.auth.signOut();
+            dispatch({ type: 'SET_LOADING', payload: false });
+          } else {
+            dispatch({ type: 'PENDING_2FA', payload: sessionInfo });
+          }
           return;
         }
 
-        // Fetch profile from DB
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', supabaseSession.user.id)
-          .single();
-
-        const profile = profileData as Profile | null;
-
-        if (!mounted) return;
-
-        const sessionInfo: SessionInfo = {
-          userId: supabaseSession.user.id,
-          isAuthenticated: true,
-          is2FAVerified: false,
-          username: profile?.username ?? supabaseSession.user.email?.split('@')[0] ?? '',
-          displayName: profile?.display_name ?? supabaseSession.user.email?.split('@')[0] ?? '',
-          role: (profile?.role as SessionInfo['role']) ?? 'viewer',
-          loginTime: supabaseSession.user.last_sign_in_at ?? new Date().toISOString(),
-          avatar: profile?.avatar ?? '?',
-          email: supabaseSession.user.email ?? '',
-        };
-
-        const twoFAUserId = localStorage.getItem(TWO_FA_KEY);
-        const twoFAVerified = twoFAUserId === supabaseSession.user.id;
-
-        if (twoFAVerified && !isSessionExpired()) {
-          dispatch({ type: 'RESTORE_SESSION', payload: { ...sessionInfo, is2FAVerified: true } });
-        } else if (twoFAVerified && isSessionExpired()) {
-          localStorage.removeItem(TWO_FA_KEY);
-          await supabase.auth.signOut();
-          dispatch({ type: 'SET_LOADING', payload: false });
-        } else {
-          dispatch({ type: 'PENDING_2FA', payload: sessionInfo });
+        // No Supabase Auth session — check for a fallback profile-only session in sessionStorage
+        // This happens when login_user validation passes but Supabase Auth signIn fails
+        const storedSession = sessionStorage.getItem('swz_fallback_session');
+        if (storedSession) {
+          try {
+            const parsed: SessionInfo = JSON.parse(storedSession);
+            const twoFAUserId = localStorage.getItem(TWO_FA_KEY);
+            const twoFAVerified = twoFAUserId === parsed.userId;
+            if (twoFAVerified && !isSessionExpired()) {
+              dispatch({ type: 'RESTORE_SESSION', payload: { ...parsed, is2FAVerified: true } });
+            } else {
+              dispatch({ type: 'PENDING_2FA', payload: { ...parsed, is2FAVerified: false } });
+            }
+          } catch {
+            sessionStorage.removeItem('swz_fallback_session');
+            dispatch({ type: 'SET_LOADING', payload: false });
+          }
+          return;
         }
+
+        dispatch({ type: 'SET_LOADING', payload: false });
       } catch (error) {
         console.error('[AuthContext] Initialization error:', error);
         if (mounted) dispatch({ type: 'SET_LOADING', payload: false });
@@ -134,6 +155,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event) => {
       if (!mounted) return;
       if (event === 'SIGNED_OUT') {
+        sessionStorage.removeItem('swz_fallback_session');
         dispatch({ type: 'LOGOUT' });
       }
     });
