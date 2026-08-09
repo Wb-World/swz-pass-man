@@ -1,0 +1,69 @@
+sites:
+1.https://secureworldz-courses.vercel.app/
+
+2.https://cyberjai.vercel.app/, admin : https://cyberjai.vercel.app/admin
+admin login credentials:
+ADMIN_EMAIL=admin@cyberjai.local
+ADMIN_PASSWORD=Admin@jangu.baba
+
+3.https://ctf-page.vercel.app/, admin : https://ctf-page.vercel.app/admin
+user login:
+username: smilin_jena
+password: Sjena@2026
+
+username: banupriya_b
+password: Banu#CTF26
+
+username: sarvesh_b
+password: Sarv@!2026
+
+username: harish_p
+password: Hari$h2026
+
+username: sudharshiini
+password: Sudha!2026
+
+username: manthravar
+password: Manthra!26
+
+username: v_ramesh
+password: Ramesh@123
+
+username: gokul_nath
+password: Gokul#2026
+
+username: p_sharani
+password: Sharani!26
+
+username: sahana
+password: Sahana@123
+
+username: dhanan_j
+password: Dhanan#CTF
+
+username: suriya_p
+password: Suriya!123
+
+username: jai
+password: jangu
+
+username: mohamed
+password: jangu
+
+admin login:
+username:jaiganesh,password:jangubaba
+username:mohamed,password:jangubaba
+
+4.https://bac-project.vercel.app/ - Vulnerable bank app
+
+5.https://dragoevent.vercel.app/
+user login:
+username : Imran1
+password : 123
+
+username : Abi
+password : abi@123
+
+6.https://dragoz.vercel.app/
+
+7.https://dragotool.shop/

@@ -1,10 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Eye, EyeOff, Lock, User, Shield, AlertCircle, Loader2, ChevronRight } from 'lucide-react';
-import { validateCredentials } from '@/services/authService';
+import { Eye, EyeOff, Lock, Mail, Shield, AlertCircle, Loader2, ChevronRight } from 'lucide-react';
+import { signInWithEmail } from '@/services/authService';
 import { useAuth } from '@/context/AuthContext';
-import type { SessionInfo } from '@/types';
 
 const MAX_ATTEMPTS = 5;
 const LOCKOUT_DURATION = 30; // seconds
@@ -38,10 +37,9 @@ export function LoginPage() {
   const navigate = useNavigate();
   const { loginStep1, session } = useAuth();
 
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [attempts, setAttempts] = useState(0);
@@ -50,10 +48,10 @@ export function LoginPage() {
   const [shake, setShake] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Redirect if already authenticated
+  // Redirect if already fully authenticated
   useEffect(() => {
     if (session?.isAuthenticated && session?.is2FAVerified) {
-      navigate('/dashboard', { replace: true });
+      navigate('/sites', { replace: true });
     }
   }, [session, navigate]);
 
@@ -87,8 +85,8 @@ export function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (locked) return;
-    if (!username.trim() || !password.trim()) {
-      setError('Please enter your username and password.');
+    if (!email.trim() || !password.trim()) {
+      setError('Please enter your email and password.');
       triggerShake();
       return;
     }
@@ -96,23 +94,10 @@ export function LoginPage() {
     setLoading(true);
     setError('');
 
-    // Simulate network delay
-    await new Promise((r) => setTimeout(r, 900));
+    const { session: userSession, error: authError } = await signInWithEmail(email, password);
 
-    const user = validateCredentials(username, password);
-
-    if (user) {
-      const sessionInfo: SessionInfo = {
-        isAuthenticated: true,
-        is2FAVerified: false,
-        username: user.username,
-        displayName: user.displayName,
-        role: user.role,
-        loginTime: new Date().toISOString(),
-        avatar: user.avatar,
-        email: user.email,
-      };
-      loginStep1(sessionInfo);
+    if (userSession) {
+      loginStep1(userSession);
       navigate('/2fa', { replace: true });
     } else {
       const newAttempts = attempts + 1;
@@ -121,7 +106,14 @@ export function LoginPage() {
         setLocked(true);
         setError(`Too many failed attempts. Locked for ${LOCKOUT_DURATION} seconds.`);
       } else {
-        setError(`Invalid credentials. ${MAX_ATTEMPTS - newAttempts} attempt${MAX_ATTEMPTS - newAttempts !== 1 ? 's' : ''} remaining.`);
+        // User-friendly error message (don't expose internal Supabase errors)
+        const isConfigurationError = authError?.toLowerCase().includes('unable to reach the login database');
+        const msg = isConfigurationError
+          ? authError ?? 'Unable to reach the login database. Check the Supabase configuration.'
+          : authError?.toLowerCase().includes('invalid') || authError?.toLowerCase().includes('credentials')
+          ? `Invalid credentials. ${MAX_ATTEMPTS - newAttempts} attempt${MAX_ATTEMPTS - newAttempts !== 1 ? 's' : ''} remaining.`
+          : `Login failed. ${MAX_ATTEMPTS - newAttempts} attempt${MAX_ATTEMPTS - newAttempts !== 1 ? 's' : ''} remaining.`;
+        setError(msg);
       }
       triggerShake();
     }
@@ -189,8 +181,8 @@ export function LoginPage() {
                 transition={{ delay: 0.3 }}
                 className="text-center"
               >
-                <h1 className="text-white font-bold text-2xl tracking-tight">Secure Worldz</h1>
-                <p className="text-dark-400 text-sm mt-1">Password Manager — Enterprise Edition</p>
+                <h1 className="text-white font-bold text-2xl tracking-tight">Secure Worldz Manager</h1>
+                <p className="text-dark-400 text-sm mt-1">Enterprise Management Platform</p>
               </motion.div>
             </div>
 
@@ -239,19 +231,19 @@ export function LoginPage() {
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Username */}
+              {/* Email */}
               <div>
-                <label className="block text-dark-300 text-sm font-medium mb-2">Username</label>
+                <label className="block text-dark-300 text-sm font-medium mb-2">Email</label>
                 <div className="relative">
-                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" />
+                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" />
                   <input
-                    id="username"
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     disabled={locked}
-                    autoComplete="username"
-                    placeholder="Enter your username"
+                    autoComplete="email"
+                    placeholder="Enter your email"
                     className="w-full pl-10 pr-4 py-3 rounded-xl bg-dark-800/80 border border-white/10 text-white placeholder-dark-500 text-sm focus:outline-none focus:border-brand-500/60 focus:ring-1 focus:ring-brand-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                   />
                 </div>
@@ -281,27 +273,6 @@ export function LoginPage() {
                   </button>
                 </div>
               </div>
-
-              {/* Remember me & Forgot password */}
-              {/* <div className="flex items-center justify-between">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
-                    className="w-4 h-4 rounded border-white/20 bg-dark-800 text-brand-500 focus:ring-brand-500/30 focus:ring-1"
-                  />
-                  <span className="text-dark-300 text-sm">Remember me</span>
-                </label>
-                <button
-                  type="button"
-                  disabled
-                  title="Contact your administrator"
-                  className="text-dark-500 text-sm cursor-not-allowed opacity-50 hover:text-dark-400 transition-colors"
-                >
-                  Forgot password?
-                </button>
-              </div> */}
 
               {/* Submit */}
               <motion.button

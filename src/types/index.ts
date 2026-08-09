@@ -4,7 +4,7 @@
 
 export type PasswordStrength = 'weak' | 'medium' | 'strong';
 
-export type UserRole = 'root' | 'admin' | 'viewer';
+export type UserRole = 'root' | 'admin' | 'viewer' | 'user';
 
 export type Category =
   | 'Gmail Accounts'
@@ -29,6 +29,7 @@ export interface AuthUser {
 }
 
 export interface SessionInfo {
+  userId: string;           // Supabase auth.users UUID
   isAuthenticated: boolean;
   is2FAVerified: boolean;
   username: string;
@@ -38,6 +39,7 @@ export interface SessionInfo {
   avatar: string;
   email: string;
 }
+
 
 export interface AuthState {
   session: SessionInfo | null;

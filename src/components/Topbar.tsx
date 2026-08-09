@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Bell, Search, Menu, X, LogOut } from 'lucide-react';
+import { Bell, Search, X, LogOut, Menu } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { usePasswords } from '@/context/PasswordContext';
@@ -8,10 +8,10 @@ import toast from 'react-hot-toast';
 import clsx from 'clsx';
 
 interface TopbarProps {
-  onMenuToggle?: () => void;
+  onToggleMobileMenu?: () => void;
 }
 
-export function Topbar({ onMenuToggle }: TopbarProps) {
+export function Topbar({ onToggleMobileMenu }: TopbarProps) {
   const { session, logout } = useAuth();
   const { stats } = usePasswords();
   const navigate = useNavigate();
@@ -34,21 +34,27 @@ export function Topbar({ onMenuToggle }: TopbarProps) {
     <motion.header
       initial={{ y: -10, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="sticky top-0 z-30 flex items-center justify-between px-6 py-3.5 bg-dark-950/80 backdrop-blur-xl border-b border-white/5"
+      className="sticky top-0 z-30 flex items-center justify-between px-4 sm:px-6 py-3 bg-dark-950/90 backdrop-blur-xl border-b border-white/5"
     >
-      {/* Left */}
-      <div className="flex items-center gap-4">
+      {/* Left: Mobile hamburger menu toggle + Logo */}
+      <div className="flex items-center gap-3">
         <button
-          onClick={onMenuToggle}
-          className="p-1.5 rounded-lg text-dark-400 hover:text-white hover:bg-white/5 transition-colors lg:hidden"
+          onClick={onToggleMobileMenu}
+          className="p-2 rounded-lg text-dark-400 hover:text-white hover:bg-white/5 transition-colors lg:hidden"
+          aria-label="Toggle Navigation Menu"
         >
           <Menu className="w-5 h-5" />
         </button>
-        <div className="hidden md:flex items-center gap-2">
-          <img src="/brand_logo.jpg" alt="SWZ" className="w-7 h-7 rounded-lg object-cover" />
-          <span className="text-white font-bold text-sm">SWZ Pass Manager</span>
+
+        <div className="flex items-center gap-2.5">
+          <img src="/brand_logo.jpg" alt="SWZ" className="w-8 h-8 rounded-xl object-cover ring-1 ring-white/10" />
+          <div className="hidden sm:block">
+            <span className="text-white font-bold text-sm leading-none block">Secure Worldz Manager</span>
+            <span className="text-dark-500 text-[11px]">Enterprise Suite</span>
+          </div>
         </div>
       </div>
+
 
       {/* Center — search */}
       <div className="flex-1 max-w-md mx-6 hidden md:block">

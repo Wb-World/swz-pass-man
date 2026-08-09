@@ -85,7 +85,7 @@ export function TwoFactorPage() {
       setSuccess(true);
       loginStep2();
       setTimeout(() => {
-        navigate('/dashboard', { replace: true });
+        navigate('/sites', { replace: true });
       }, 1200);
     } else {
       const newAttempts = attempts + 1;
@@ -317,7 +317,7 @@ export function TwoFactorPage() {
           <div className="h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
           <div className="px-8 py-3 bg-dark-900/50 flex items-center justify-center gap-1.5">
             <Shield className="w-3 h-3 text-dark-500" />
-            <span className="text-dark-500 text-xs">Secure Worldz — 2FA Layer</span>
+            <span className="text-dark-500 text-xs">Secure Worldz Manager — 2FA Layer</span>
           </div>
         </motion.div>
       </motion.div>

@@ -3,6 +3,7 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from '@/context/AuthContext';
 import { PasswordProvider } from '@/context/PasswordContext';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { AdminRoute } from '@/components/ProtectedRoute';
 import { AppLayout } from '@/layouts/AppLayout';
 import { LoginPage } from '@/pages/LoginPage';
 import { TwoFactorPage } from '@/pages/TwoFactorPage';
@@ -11,12 +12,20 @@ import { PasswordsPage } from '@/pages/PasswordsPage';
 import { FavoritesPage } from '@/pages/FavoritesPage';
 import { CategoriesPage } from '@/pages/CategoriesPage';
 import { SettingsPage } from '@/pages/SettingsPage';
+import { EmployeesPage } from '@/pages/EmployeesPage';
+import { SitesPage } from '@/pages/SitesPage';
+import { OurMailsPage } from '@/pages/OurMailsPage';
+import { ApiKeysPage } from '@/pages/ApiKeysPage';
+import { AdminPage } from '@/pages/AdminPage';
+
+import { ThemeProvider } from '@/context/ThemeContext';
 
 function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <PasswordProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <PasswordProvider>
           {/* Toast Notifications */}
           <Toaster
             position="top-right"
@@ -52,21 +61,36 @@ function App() {
                 </ProtectedRoute>
               }
             >
-              <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/passwords" element={<PasswordsPage />} />
-              <Route path="/favorites" element={<FavoritesPage />} />
+              <Route path="/dashboard"  element={<DashboardPage />} />
+              <Route path="/passwords"  element={<PasswordsPage />} />
+              <Route path="/favorites"  element={<FavoritesPage />} />
               <Route path="/categories" element={<CategoriesPage />} />
-              <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/settings"   element={<SettingsPage />} />
+              <Route path="/employees"  element={<EmployeesPage />} />
+              <Route path="/sites"      element={<SitesPage />} />
+              <Route path="/our-mails"  element={<OurMailsPage />} />
+              <Route path="/api-keys"   element={<ApiKeysPage />} />
+
+              {/* Admin-only route */}
+              <Route
+                path="/admin"
+                element={
+                  <AdminRoute>
+                    <AdminPage />
+                  </AdminRoute>
+                }
+              />
             </Route>
 
             {/* Default redirect */}
-            <Route path="/" element={<Navigate to="/login" replace />} />
-            <Route path="*" element={<Navigate to="/login" replace />} />
+            <Route path="/"  element={<Navigate to="/sites" replace />} />
+            <Route path="*"  element={<Navigate to="/sites" replace />} />
           </Routes>
         </PasswordProvider>
       </AuthProvider>
-    </BrowserRouter>
-  );
+    </ThemeProvider>
+  </BrowserRouter>
+);
 }
 
 export default App;

@@ -1,4 +1,14 @@
 /** @type {import('tailwindcss').Config} */
+
+function withOpacity(variableName) {
+  return ({ opacityValue }) => {
+    if (opacityValue !== undefined) {
+      return `rgb(var(${variableName}) / ${opacityValue})`;
+    }
+    return `rgb(var(${variableName}))`;
+  };
+}
+
 export default {
   content: [
     "./index.html",
@@ -9,17 +19,17 @@ export default {
     extend: {
       colors: {
         brand: {
-          50:  '#f0f4ff',
-          100: '#dce7ff',
-          200: '#c0d1ff',
-          300: '#9ab4ff',
-          400: '#718aff',
-          500: '#4f63f0',
-          600: '#3d47e6',
-          700: '#3236cb',
-          800: '#2a2da4',
-          900: '#282d82',
-          950: '#181a4e',
+          50:  withOpacity('--color-brand-400'),
+          100: withOpacity('--color-brand-400'),
+          200: withOpacity('--color-brand-400'),
+          300: withOpacity('--color-brand-400'),
+          400: withOpacity('--color-brand-400'),
+          500: withOpacity('--color-brand-500'),
+          600: withOpacity('--color-brand-600'),
+          700: withOpacity('--color-brand-600'),
+          800: withOpacity('--color-brand-600'),
+          900: withOpacity('--color-brand-600'),
+          950: withOpacity('--color-brand-600'),
         },
         dark: {
           50:  '#f6f7f9',
@@ -30,9 +40,9 @@ export default {
           500: '#6a7a9a',
           600: '#556180',
           700: '#454f68',
-          800: '#3b4257',
-          900: '#343a4b',
-          950: '#0d0f1a',
+          800: withOpacity('--bg-dark-800'),
+          900: withOpacity('--bg-dark-900'),
+          950: withOpacity('--bg-dark-950'),
         },
         glass: {
           DEFAULT: 'rgba(255,255,255,0.05)',
@@ -67,8 +77,8 @@ export default {
       },
       boxShadow: {
         'glass': '0 8px 32px rgba(0,0,0,0.4)',
-        'glow': '0 0 20px rgba(79,99,240,0.4)',
-        'glow-sm': '0 0 10px rgba(79,99,240,0.3)',
+        'glow': '0 0 20px rgb(var(--color-brand-500) / 0.4)',
+        'glow-sm': '0 0 10px rgb(var(--color-brand-500) / 0.3)',
       },
     },
   },

@@ -1,57 +1,63 @@
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import { Sidebar } from '@/components/Sidebar';
-import { Topbar } from '@/components/Topbar';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Topbar } from '@/components/Topbar';
+import { Sidebar } from '@/components/Sidebar';
+import { MobileNotificationBanner } from '@/components/MobileNotificationBanner';
 import { useAuth } from '@/context/AuthContext';
 
 export function AppLayout() {
-  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const { updateLastActivity } = useAuth();
+  const [collapsed, setCollapsed] = useState(true); // default compressed per hover requirement
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
     <div
-      className="flex h-screen bg-dark-950 overflow-hidden"
+      className="flex h-screen overflow-hidden bg-dark-950 text-slate-100 relative"
       onMouseMove={updateLastActivity}
       onKeyDown={updateLastActivity}
     >
+      {/* Mobile push notification banner */}
+      <MobileNotificationBanner />
+
       {/* Desktop Sidebar */}
-      <div className="hidden lg:flex flex-shrink-0">
-        <Sidebar />
+      <div className="hidden lg:block h-full z-40">
+        <Sidebar
+          collapsed={collapsed}
+          onToggleCollapse={() => setCollapsed((prev) => !prev)}
+        />
       </div>
 
-      {/* Mobile Sidebar */}
+      {/* Mobile Drawer Navigation Overlay */}
       <AnimatePresence>
-        {mobileSidebarOpen && (
+        {mobileOpen && (
           <>
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setMobileSidebarOpen(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+              onClick={() => setMobileOpen(false)}
+              className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 lg:hidden"
             />
-            <motion.div
-              initial={{ x: -280 }}
-              animate={{ x: 0 }}
-              exit={{ x: -280 }}
-              transition={{ type: 'spring', damping: 25 }}
-              className="fixed left-0 top-0 h-full z-50 lg:hidden"
-            >
-              <Sidebar />
-            </motion.div>
+            <div className="fixed inset-y-0 left-0 z-50 lg:hidden">
+              <Sidebar
+                isMobile
+                onCloseMobile={() => setMobileOpen(false)}
+              />
+            </div>
           </>
         )}
       </AnimatePresence>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Topbar onMenuToggle={() => setMobileSidebarOpen(!mobileSidebarOpen)} />
-        <main className="flex-1 overflow-y-auto">
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
+        <Topbar onToggleMobileMenu={() => setMobileOpen((prev) => !prev)} />
+        <main className="flex-1 overflow-y-auto scrollbar-hide">
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25 }}
+            className="w-full min-h-full"
           >
             <Outlet />
           </motion.div>

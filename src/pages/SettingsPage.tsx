@@ -8,6 +8,7 @@ import { useAuth } from '@/context/AuthContext';
 import { usePasswords } from '@/context/PasswordContext';
 import { useSession } from '@/hooks/useSession';
 import { useNavigate } from 'react-router-dom';
+import { useTheme, THEMES } from '@/context/ThemeContext';
 import toast from 'react-hot-toast';
 import clsx from 'clsx';
 
@@ -25,6 +26,7 @@ export function SettingsPage() {
   const { session, logout } = useAuth();
   const { exportPasswords, stats } = usePasswords();
   const { duration } = useSession();
+  const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<SettingsTab>('profile');
@@ -65,9 +67,9 @@ export function SettingsPage() {
         <p className="text-dark-400 text-xs sm:text-sm mt-0.5">Manage your account and preferences</p>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4 md:gap-6">
-        {/* Tab sidebar */}
-        <div className="flex-shrink-0 w-full md:w-48 flex md:flex-col overflow-x-auto gap-1.5 md:gap-1 pb-1 md:pb-0 scrollbar-hide">
+      <div className="space-y-4">
+        {/* Top tabs keep settings navigation out of a side panel. */}
+        <div className="flex w-full overflow-x-auto gap-1.5 pb-1 scrollbar-hide">
           {tabs.map(({ id, icon: Icon, label }) => (
             <button
               key={id}
@@ -84,19 +86,10 @@ export function SettingsPage() {
             </button>
           ))}
 
-          <div className="hidden md:block pt-4">
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 transition-all"
-            >
-              <LogOut className="w-4 h-4" />
-              Logout
-            </button>
-          </div>
         </div>
 
         {/* Tab content */}
-        <div className="flex-1">
+        <div>
           <motion.div
             key={activeTab}
             initial={{ opacity: 0, x: 10 }}
@@ -195,38 +188,81 @@ export function SettingsPage() {
 
             {/* Appearance Tab */}
             {activeTab === 'appearance' && (
-              <div className="p-6 space-y-5">
-                <h2 className="text-white font-semibold">Appearance</h2>
-                <div className="flex items-center justify-between p-4 rounded-xl bg-dark-800/50 border border-white/5">
-                  <div className="flex items-center gap-3">
-                    <Palette className="w-5 h-5 text-brand-400" />
-                    <div>
-                      <p className="text-white text-sm font-medium">Theme</p>
-                      <p className="text-dark-400 text-xs">Current: Dark (Default)</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    {['Dark'].map((t) => (
-                      <button
-                        key={t}
-                        className={clsx(
-                          'px-3 py-1.5 rounded-lg text-xs font-medium border transition-all',
-                          t === 'Dark'
-                            ? 'bg-brand-500/20 border-brand-500/30 text-brand-400'
-                            : 'border-white/10 text-dark-400 hover:bg-white/5'
-                        )}
-                      >
-                        {t}
-                      </button>
-                    ))}
+              <div className="p-6 space-y-6">
+                <div>
+                  <h2 className="text-white font-semibold flex items-center gap-2">
+                    <Palette className="w-5 h-5 text-brand-400" /> Theme & Appearance
+                  </h2>
+                  <p className="text-dark-400 text-xs mt-1">
+                    Customize the visual aesthetic of Secure Worldz Manager
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  <label className="block text-dark-300 text-xs font-medium uppercase tracking-wider">
+                    Select Theme Palette
+                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    {THEMES.map((t) => {
+                      const isSelected = theme === t.id;
+                      return (
+                        <div
+                          key={t.id}
+                          onClick={() => {
+                            setTheme(t.id);
+                            toast.success(`Theme changed to ${t.name}`);
+                          }}
+                          className={clsx(
+                            'cursor-pointer p-4 rounded-xl border transition-all duration-200 group flex flex-col justify-between space-y-3',
+                            isSelected
+                              ? 'bg-brand-500/10 border-brand-500/50 shadow-lg ring-1 ring-brand-500/30'
+                              : 'bg-dark-800/40 border-white/8 hover:border-white/20 hover:bg-dark-800/80'
+                          )}
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <p className="text-white font-semibold text-sm flex items-center gap-1.5">
+                                {t.name}
+                                {isSelected && (
+                                  <span className="w-2 h-2 rounded-full bg-brand-400 animate-pulse" />
+                                )}
+                              </p>
+                              <p className="text-dark-400 text-xs mt-0.5 leading-relaxed">{t.description}</p>
+                            </div>
+                          </div>
+
+                          {/* Color Palette Swatch */}
+                          <div className="flex items-center justify-between pt-2 border-t border-white/5">
+                            <div className="flex items-center gap-1.5">
+                              {t.previewColors.map((color, idx) => (
+                                <div
+                                  key={idx}
+                                  className="w-5 h-5 rounded-md border border-white/10 shadow-sm"
+                                  style={{ backgroundColor: color }}
+                                />
+                              ))}
+                            </div>
+                            <span className={clsx(
+                              'text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full border',
+                              isSelected
+                                ? 'bg-brand-500/20 border-brand-500/40 text-brand-300'
+                                : 'bg-white/5 border-white/10 text-dark-400'
+                            )}>
+                              {isSelected ? 'Active' : 'Select'}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
+
                 <div className="flex items-center justify-between p-4 rounded-xl bg-dark-800/50 border border-white/5">
                   <div className="flex items-center gap-3">
                     <Bell className="w-5 h-5 text-brand-400" />
                     <div>
-                      <p className="text-white text-sm font-medium">Notifications</p>
-                      <p className="text-dark-400 text-xs">Security alerts and copy confirmations</p>
+                      <p className="text-white text-sm font-medium">Real-time Mobile Push Notifications</p>
+                      <p className="text-dark-400 text-xs">Receive live pop-ups when admins add or update items</p>
                     </div>
                   </div>
                   <button
