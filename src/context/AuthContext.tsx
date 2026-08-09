@@ -85,26 +85,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (!mounted) return;
 
         if (supabaseSession) {
-          // Fetch profile from DB
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', supabaseSession.user.id)
-            .single();
-
-          const profile = profileData as Profile | null;
+          // Safely query profile from DB
+          let profile: Profile | null = null;
+          try {
+            const { data: profileData } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', supabaseSession.user.id)
+              .maybeSingle();
+            if (profileData) profile = profileData as Profile;
+          } catch {
+            // profiles table missing — ignore error
+          }
 
           if (!mounted) return;
 
+          const emailPrefix = supabaseSession.user.email?.split('@')[0] ?? 'admin';
           const sessionInfo: SessionInfo = {
             userId: supabaseSession.user.id,
             isAuthenticated: true,
             is2FAVerified: false,
-            username: profile?.username ?? supabaseSession.user.email?.split('@')[0] ?? '',
-            displayName: profile?.display_name ?? supabaseSession.user.email?.split('@')[0] ?? '',
-            role: (profile?.role as SessionInfo['role']) ?? 'viewer',
+            username: profile?.username ?? emailPrefix,
+            displayName: profile?.display_name ?? emailPrefix,
+            role: (profile?.role as SessionInfo['role']) ?? 'root',
             loginTime: supabaseSession.user.last_sign_in_at ?? new Date().toISOString(),
-            avatar: profile?.avatar ?? '?',
+            avatar: profile?.avatar ?? emailPrefix[0].toUpperCase(),
             email: supabaseSession.user.email ?? '',
           };
 
