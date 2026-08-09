@@ -106,13 +106,8 @@ export function LoginPage() {
         setLocked(true);
         setError(`Too many failed attempts. Locked for ${LOCKOUT_DURATION} seconds.`);
       } else {
-        // User-friendly error message (don't expose internal Supabase errors)
-        const isConfigurationError = authError?.toLowerCase().includes('unable to reach the login database');
-        const msg = isConfigurationError
-          ? authError ?? 'Unable to reach the login database. Check the Supabase configuration.'
-          : authError?.toLowerCase().includes('invalid') || authError?.toLowerCase().includes('credentials')
-          ? `Invalid credentials. ${MAX_ATTEMPTS - newAttempts} attempt${MAX_ATTEMPTS - newAttempts !== 1 ? 's' : ''} remaining.`
-          : `Login failed. ${MAX_ATTEMPTS - newAttempts} attempt${MAX_ATTEMPTS - newAttempts !== 1 ? 's' : ''} remaining.`;
+        const remaining = MAX_ATTEMPTS - newAttempts;
+        const msg = authError || `Invalid credentials. ${remaining} attempt${remaining !== 1 ? 's' : ''} remaining.`;
         setError(msg);
       }
       triggerShake();
